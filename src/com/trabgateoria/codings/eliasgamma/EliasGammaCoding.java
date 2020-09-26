@@ -1,4 +1,5 @@
-package com.trabgateoria;
+package com.trabgateoria.codings.eliasgamma;
+import com.trabgateoria.codings.CodingProtocol;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -7,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class EliasGammaCoding {
+public class EliasGammaCoding implements CodingProtocol {
 
     public String pathEncodedFile;
     public String pathDictionaryFile;
@@ -21,7 +22,7 @@ public class EliasGammaCoding {
         this.pathDecodedFile = file.getParent() + File.separator + "Elias-Gamma-Decoded";
     }
 
-    public void encode() throws IOException {
+    public String encode() throws IOException {
         Path path = Paths.get(file.getAbsolutePath());
         String fileData = readFile(path);
 
@@ -47,9 +48,10 @@ public class EliasGammaCoding {
         in.write(bsCoded.toByteArray());
         /* cria um arquivo dicionario com o alfabeto passado por parametro */
         encodeDicionario(alphabet);
+        return pathEncodedFile;
     }
 
-    public void decode() throws IOException {
+    public String decode() throws IOException {
         Map<Integer, Integer> alphabet = decodeDicionario();
         byte[] ans = Files.readAllBytes(Paths.get(pathEncodedFile));
 
@@ -81,6 +83,7 @@ public class EliasGammaCoding {
             }
         }
         createDecodedFile(decodedString);
+        return pathDecodedFile;
     }
 
     private void createDecodedFile(String decodedString) throws IOException {

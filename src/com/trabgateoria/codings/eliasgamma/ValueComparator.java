@@ -1,4 +1,4 @@
-package com.trabgateoria;
+package com.trabgateoria.codings.eliasgamma;
 import java.util.Comparator;
 import java.util.Map;
 

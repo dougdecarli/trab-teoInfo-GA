@@ -1,5 +1,8 @@
 package com.trabgateoria;
 
+import com.trabgateoria.codings.CodingProtocol;
+import com.trabgateoria.codings.eliasgamma.EliasGammaCoding;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -9,8 +12,8 @@ import static java.lang.System.exit;
 public class Main {
 
     static Scanner scanner = new Scanner(System.in);
-    static File fileAlice29 = new File("src/com/trabgateoria/alice29.txt");
-    static File fileSum = new File("path");
+    static File fileAlice29 = new File("src/com/trabgateoria/resources/alice29.txt");
+    static File fileSum = new File("src/com/trabgateoria/resources/sum.txt");
 
     public static void main(String[] args) throws IOException {
 
@@ -38,32 +41,6 @@ public class Main {
         }
     }
 
-    static void runEncode(File fileChosen) throws IOException {
-        System.out.println("Digite 1 para codificar em Golomb\n" +
-                "Digite 2 para codificar em Elias-Gamma\n" +
-                "Digite 3 para codificar em Fibonacci\n" +
-                "Digite 4 para codificar em Unaria \n" +
-                "Digite 5 para codificar em Delta");
-
-        int codingType = scanner.nextInt();
-
-        switch (codingType) {
-            case 1:
-                break;
-            case 2:
-                EliasGammaCoding eliasGammaCoding = new EliasGammaCoding(fileChosen);
-                eliasGammaCoding.encode();
-                eliasGammaCoding.decode();
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-        }
-    }
-
     static File chooseFile() {
         System.out.println("Digite 1 para codificar o arquivo alice29.txt \n" +
                 "Digite 2 para codificar o arquivo sum.txt");
@@ -80,4 +57,32 @@ public class Main {
         }
     }
 
+    static void runEncode(File fileChosen) throws IOException {
+        System.out.println("Digite 1 para codificar em Golomb\n" +
+                "Digite 2 para codificar em Elias-Gamma\n" +
+                "Digite 3 para codificar em Fibonacci\n" +
+                "Digite 4 para codificar em Unaria \n" +
+                "Digite 5 para codificar em Delta");
+
+        int codingType = scanner.nextInt();
+
+        switch (codingType) {
+            case 1:
+                break;
+            case 2:
+                performEncoding(new EliasGammaCoding(fileChosen));
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+        }
+    }
+
+    static void performEncoding(CodingProtocol codingImplementation) throws IOException {
+        System.out.println("Foi gerado o arquivo encodado: " + codingImplementation.encode());
+        System.out.println("Foi gerado o arquivo decodado: " + codingImplementation.decode());
+    }
 }
