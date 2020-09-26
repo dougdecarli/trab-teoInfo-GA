@@ -1,9 +1,6 @@
 package com.trabgateoria;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,48 +10,53 @@ import java.util.stream.Stream;
 public class EliasGammaCoding {
 
     public String pathEncodedFile;
+    public String pathDictionaryFile;
+    public String pathDecodedFile;
     public File file;
 
     public EliasGammaCoding(File file) {
         this.file = file;
-        this.pathEncodedFile = file.getParent() + File.separator + "encode";
+        this.pathEncodedFile = file.getParent() + File.separator + "Elias-Gamma-Encoded";
+        this.pathDictionaryFile = file.getParent() + File.separator + "dicionario";
+        this.pathDecodedFile = file.getParent() + File.separator + "Elias-Gamma-Decoded";
     }
 
     public void encode() throws IOException {
         Path path = Paths.get(file.getAbsolutePath());
-        String dadosArquivo = readFile(path);
+        String fileData = readFile(path);
 
         int i, d, t, p = 0;
-        BitSet bsD = new BitSet(), bsCodificado = new BitSet();
+        BitSet bsD = new BitSet(), bsCoded = new BitSet();
 
-        Map<Integer, Integer> alfabeto = createAlphabet(dadosArquivo);
+        Map<Integer, Integer> alphabet = createAlphabet(fileData);
 
-        for (i = 0; i < dadosArquivo.length(); i++) {
-            Integer k = (int) dadosArquivo.charAt(i);
-            d = alfabeto.get(k);
+        for (i = 0; i < fileData.length(); i++) {
+            Integer k = (int) fileData.charAt(i);
+            d = alphabet.get(k);
 
             bsD = egEncode(d);
             t = egSize(d);
             for (int j = 0; j < t; j++) {
-                bsCodificado.set(p, bsD.get(j));
+                bsCoded.set(p, bsD.get(j));
                 p++;
             }
         }
 
         File encode = new File(pathEncodedFile);
         FileOutputStream in = new FileOutputStream(encode);
-        in.write(bsCodificado.toByteArray());
+        in.write(bsCoded.toByteArray());
         /* cria um arquivo dicionario com o alfabeto passado por parametro */
-        encodeDicionario(alfabeto);
+        encodeDicionario(alphabet);
     }
 
-    public String decode() throws IOException {
-        Map<Integer, Integer> alfabeto2 = decodeDicionario();
+    public void decode() throws IOException {
+        Map<Integer, Integer> alphabet = decodeDicionario();
         byte[] ans = Files.readAllBytes(Paths.get(pathEncodedFile));
+
         BitSet newBS = BitSet.valueOf(ans);
         int q = 0, j;
         int t = 0;
-        String novaString = "";
+        String decodedString = "";
         while (q < newBS.length()) {
             BitSet bsD = new BitSet();
             j = newBS.nextSetBit(q) - q;
@@ -69,36 +71,43 @@ public class EliasGammaCoding {
             q += t;
             int d = egDecode(bsD);
 
-            for (Map.Entry<Integer, Integer> entry : alfabeto2.entrySet()) {
+            for (Map.Entry<Integer, Integer> entry : alphabet.entrySet()) {
                 int k = entry.getKey();
                 Integer v = entry.getValue();
                 if (v == d) {
-                    novaString += (char) k;
+                    decodedString += (char) k;
                     break;
                 }
             }
         }
-        return novaString;
+        createDecodedFile(decodedString);
     }
 
-    //MARK: - Helpers
+    private void createDecodedFile(String decodedString) throws IOException {
+        File decodedFile = new File(pathDecodedFile);
+        FileWriter writer = new FileWriter(decodedFile);
+        writer.write(decodedString);
+        writer.close();
+    }
+
     private String readFile(Path path) throws IOException {
         Stream<String> linhas = Files.lines(path);
-        String dadosArquivo = "";
+        String fileData = "";
         for (Object linha : linhas.toArray()) {
-            dadosArquivo += linha.toString();
+            fileData += linha.toString();
         }
-        return dadosArquivo;
+        return fileData;
     }
 
     private Map<Integer, Integer> decodeDicionario() throws IOException {
-        File dicionario = new File("dicionario");
-        byte[] ans = Files.readAllBytes(Paths.get(dicionario.getAbsolutePath()));
+        File dictionary = new File(pathDictionaryFile);
+        byte[] ans = Files.readAllBytes(Paths.get(dictionary.getAbsolutePath()));
+        Files.deleteIfExists(Paths.get(dictionary.getAbsolutePath()));
         BitSet newBS = BitSet.valueOf(ans);
         /* percorrer bitset adicionando no dicionario primeiro o valor, depois a chave */
         Map<Integer, Integer> result = new HashMap<Integer, Integer>();
         int q = 0, j, t = 0;
-        Integer valorValor = null, valorChave = null;
+        Integer value = null, keyValue = null;
         while (q < newBS.length()) {
             BitSet bsD = new BitSet();
             j = newBS.nextSetBit(q) - q;
@@ -111,28 +120,28 @@ public class EliasGammaCoding {
                 bsD.set(k, newBS.get(q + k));
             }
             q += t;
-            if (valorChave == null) {
-                valorChave = egDecode(bsD);
+            if (keyValue == null) {
+                keyValue = egDecode(bsD);
                 continue;
             }
 
-            if (valorValor == null) {
-                valorValor = egDecode(bsD);
+            if (value == null) {
+                value = egDecode(bsD);
             }
-            if (valorValor != null && valorChave != null) {
-                result.put(valorChave, valorValor);
-                valorValor = null;
-                valorChave = null;
+            if (value != null && keyValue != null) {
+                result.put(keyValue, value);
+                value = null;
+                keyValue = null;
             }
         }
         return result;
     }
 
-    private void encodeDicionario(Map<Integer, Integer> dicionario) throws FileNotFoundException, IOException {
-        FileOutputStream inD = new FileOutputStream(new File("dicionario"));
+    private void encodeDicionario(Map<Integer, Integer> dictionary) throws FileNotFoundException, IOException {
+        FileOutputStream inD = new FileOutputStream(new File(pathDictionaryFile));
         BitSet bsDic = new BitSet();
         int t = 0, p = 0;
-        for (Map.Entry<Integer, Integer> entry : dicionario.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : dictionary.entrySet()) {
             Integer k = entry.getKey();
             Integer v = entry.getValue();
 
@@ -150,16 +159,15 @@ public class EliasGammaCoding {
                 bsDic.set(p, bsD.get(j));
                 p++;
             }
-            System.out.println("Caracter " + (char) k.intValue() + " representadado por " + v + ": (byte)" + bitSetSequence(bsD, t));
         }
         inD.write(bsDic.toByteArray());
     }
 
-    private static Map createAlphabet(String caracteres) {
+    private static Map createAlphabet(String chars) {
         Map<Integer, Integer> alfabeto = new HashMap<Integer, Integer>();
         int d;
-        for (int i = 0; i < caracteres.length(); i++) {
-            d = ((int) caracteres.charAt(i));
+        for (int i = 0; i < chars.length(); i++) {
+            d = ((int) chars.charAt(i));
             int cont = 1;
             if (alfabeto.containsKey(d)) {
                 cont = alfabeto.get(d) + 1;
@@ -181,17 +189,7 @@ public class EliasGammaCoding {
         return result;
     }
 
-    public String bitSetSequence(BitSet bs, int t) {
-        String s = "";
-        for (int i = 0; i < t; i++) {
-            if (i % 8 == 0 && i > 0) {
-                s += " ";
-            }
-            s += (bs.get(i) ? "1" : "0");
-        }
-        return s;
-    }
-
+    //MARK: - Helpers
     public int egSize(int n) {
         if (n == 0 || n == 1) {
             return 2;
@@ -200,37 +198,37 @@ public class EliasGammaCoding {
     }
 
     public BitSet egEncode(int n) {
-        BitSet codigo;
+        BitSet code;
         if (n == 0 || n == 1) {
-            codigo = new BitSet(2);
-            codigo.set(0);
+            code = new BitSet(2);
+            code.set(0);
             if (n == 1) {
-                codigo.set(1);
+                code.set(1);
             }
-            return codigo;
+            return code;
         }
 
         int p1 = (int) (Math.log(n) / Math.log(2));
         int p2 = n - (int) Math.pow(2, p1);
-        codigo = new BitSet(p1 * 2 + 1);
+        code = new BitSet(p1 * 2 + 1);
 
         int i;
         for (i = 0; i < p1; i++) {
-            codigo.clear(i);
+            code.clear(i);
         }
 
-        codigo.set(p1);
+        code.set(p1);
         int k = 1 << (p1 - 1);
         for (i = p1 + 1; i < p1 * 2 + 1; i++) {
-            codigo.set(i, (p2 & k) != 0);
+            code.set(i, (p2 & k) != 0);
             k >>= 1;
         }
-        return codigo;
+        return code;
     }
 
     public int egDecode(BitSet codigo) {
-        int separador = codigo.nextSetBit(0);
-        if (separador == 0) {
+        int separator = codigo.nextSetBit(0);
+        if (separator == 0) {
             if (codigo.get(1)) {
                 return 1;
             } else {
@@ -238,9 +236,9 @@ public class EliasGammaCoding {
             }
         }
 
-        int n = (int) Math.pow(2, separador);
-        int i = separador + 1;
-        int pot = separador - 1;
+        int n = (int) Math.pow(2, separator);
+        int i = separator + 1;
+        int pot = separator - 1;
         while (pot >= 0) {
             if (codigo.get(i)) {
                 n += (int) Math.pow(2, pot);
@@ -250,7 +248,5 @@ public class EliasGammaCoding {
         }
         return n;
     }
-
-
 }
 
