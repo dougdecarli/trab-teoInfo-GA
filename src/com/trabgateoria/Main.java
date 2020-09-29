@@ -2,6 +2,7 @@ package com.trabgateoria;
 
 import com.trabgateoria.codings.CodingProtocol;
 import com.trabgateoria.codings.eliasgamma.EliasGammaCoding;
+import com.trabgateoria.codings.unary.UnaryCoding;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +13,10 @@ import static java.lang.System.exit;
 public class Main {
 
     static Scanner scanner = new Scanner(System.in);
-    static File fileAlice29 = new File("src/com/trabgateoria/resources/alice29.txt");
-    static File fileSum = new File("src/com/trabgateoria/resources/sum.txt");
+//    static File fileAlice29 = new File("src/com/trabgateoria/resources/alice29.txt");
+//    static File fileSum = new File("src/com/trabgateoria/resources/sum.txt");
+    static File fileAlice29 = new File("src//com//trabgateoria//resources//alice29.txt");
+    static File fileSum = new File("src//com//trabgateoria//resources//sum.txt");
 
     public static void main(String[] args) throws IOException {
 
@@ -58,25 +61,26 @@ public class Main {
     }
 
     static void runEncode(File fileChosen) throws IOException {
-        System.out.println("Digite 1 para codificar em Golomb\n" +
-                "Digite 2 para codificar em Elias-Gamma\n" +
-                "Digite 3 para codificar em Fibonacci\n" +
-                "Digite 4 para codificar em Unaria \n" +
-                "Digite 5 para codificar em Delta");
+        System.out.println("Digite 0 para codificar em Golomb\n" +
+                "Digite 1 para codificar em Elias-Gamma\n" +
+                "Digite 2 para codificar em Fibonacci\n" +
+                "Digite 3 para codificar em Unaria \n" +
+                "Digite 4 para codificar em Delta");
 
         int codingType = scanner.nextInt();
 
         switch (codingType) {
-            case 1:
+            case 0:
                 break;
-            case 2:
+            case 1:
                 performEncoding(new EliasGammaCoding(fileChosen));
                 break;
+            case 2:
+                break;
             case 3:
+                performEncoding(new UnaryCoding(fileChosen));
                 break;
             case 4:
-                break;
-            case 5:
                 break;
         }
     }

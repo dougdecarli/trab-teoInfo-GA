@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class EliasGammaCoding implements CodingProtocol {
-
     public String pathEncodedFile;
     public String pathDictionaryFile;
     public String pathDecodedFile;
@@ -17,9 +16,9 @@ public class EliasGammaCoding implements CodingProtocol {
 
     public EliasGammaCoding(File file) {
         this.file = file;
-        this.pathEncodedFile = file.getParent() + File.separator + "Elias-Gamma-Encoded";
+        this.pathEncodedFile = file.getParent() + File.separator + "EliasGamma.cod";
         this.pathDictionaryFile = file.getParent() + File.separator + "dicionario";
-        this.pathDecodedFile = file.getParent() + File.separator + "Elias-Gamma-Decoded";
+        this.pathDecodedFile = file.getParent() + File.separator + "ElisGamma.dec";
     }
 
     public String encode() throws IOException {
@@ -30,6 +29,8 @@ public class EliasGammaCoding implements CodingProtocol {
         BitSet bsD = new BitSet(), bsCoded = new BitSet();
 
         Map<Integer, Integer> alphabet = createAlphabet(fileData);
+
+        //add header bytes 1 and 0
 
         for (i = 0; i < fileData.length(); i++) {
             Integer k = (int) fileData.charAt(i);
@@ -84,6 +85,11 @@ public class EliasGammaCoding implements CodingProtocol {
         }
         createDecodedFile(decodedString);
         return pathDecodedFile;
+    }
+
+    @Override
+    public void addHeader(ArrayList<Byte> encodedFileBytes) {
+
     }
 
     private void createDecodedFile(String decodedString) throws IOException {
