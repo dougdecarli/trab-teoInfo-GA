@@ -2,7 +2,7 @@ package com.trabgateoria.codings.golomb;
 
 import java.util.BitSet;
 
-public class ManipulacaoBits {
+public class Bitset {
 
     //Convert um BitSet para um String
     public String bitSetParaString(BitSet bit) {

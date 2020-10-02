@@ -54,7 +54,7 @@ public class Decodificador extends Divisor {
             inteiros.set(inteiros.size() - j - 1, inteirosV2.get(j));
         }
 
-        ManipulacaoBits MN = new ManipulacaoBits();
+        Bitset MN = new Bitset();
         System.out.println("\n"+"bitset recebido: " + MN.bitSetParaString(bit)+"\n");
         System.out.println("Decodificado em ASCII: " + inteiros.toString()+"\n");
         System.out.println("posicao do bitset recebido: " + bit.toString()+"\n");

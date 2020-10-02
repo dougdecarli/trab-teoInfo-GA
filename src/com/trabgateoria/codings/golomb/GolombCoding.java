@@ -29,7 +29,7 @@ public class GolombCoding {
 
         //Ler arquivo do caminho informado
 
-        ManipulacaoArquivo maniArq = new ManipulacaoArquivo(ARQUIVO_NAO_CODIFICADO);
+        LeituraEscritaArquivo maniArq = new LeituraEscritaArquivo(ARQUIVO_NAO_CODIFICADO);
         String dadosArquivo = maniArq.leArquivo();
 
         //Cria um array de char e o converte em um arrayList de inteiros
@@ -51,7 +51,7 @@ public class GolombCoding {
         decod.colombParaInteiro(arqcodificado);
 
         //Escreve um arquivo em golomb no caminho informado para o arquivo codificado
-        ManipulacaoArquivo MA = new ManipulacaoArquivo(ARQUIVO_CODIFICADO);
+        LeituraEscritaArquivo MA = new LeituraEscritaArquivo(ARQUIVO_CODIFICADO);
         MA.diretorioParaEncodeFiles();
         MA.escreveArquivo(arqcodificado);
         System.out.println("Foi criado o arquivo codificado no seguinte local: " + ARQUIVO_CODIFICADO +"\n");

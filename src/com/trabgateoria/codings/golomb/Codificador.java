@@ -56,7 +56,7 @@ public class Codificador extends Divisor {
         codigo.set(posicao);
 
 
-        ManipulacaoBits MB = new ManipulacaoBits();
+        Bitset MB = new Bitset();
 
 
         for (int i = 0; i < ALBT.size(); i++) {

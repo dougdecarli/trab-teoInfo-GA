@@ -9,18 +9,18 @@ import java.nio.file.Paths;
 import java.util.BitSet;
 import java.util.stream.Stream;
 
-public class ManipulacaoArquivo {
+public class LeituraEscritaArquivo {
 
 
     private String diretorio;
 
 
-    public ManipulacaoArquivo(String diretorio) {
+    public LeituraEscritaArquivo(String diretorio) {
         this.diretorio = diretorio;
     }
 
 
-    public ManipulacaoArquivo() {
+    public LeituraEscritaArquivo() {
     }
 
     //Faz a leitura de um arquivo de texto comum
